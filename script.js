@@ -8,37 +8,40 @@ let fireworks = [];
 
 function Firework(x, y) {
   this.x = x;
-  this.y = y;
-  this.particles = Array.from({ length: 40 }, () => ({
-    angle: Math.random() * Math.PI * 2,
-    speed: Math.random() * 4 + 2,
-    life: 60
-  }));
+  this.y = canvas.height;
+  this.targetY = y;
+  this.exploded = false;
+  this.particles = [];
 }
 
-function explode(fw) {
-  fw.particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(
-      fw.x + Math.cos(p.angle) * (60 - p.life),
-      fw.y + Math.sin(p.angle) * (60 - p.life),
-      2,
-      0,
-      Math.PI * 2
-    );
-    ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
-    ctx.fill();
-    p.life--;
-  });
+function createExplosion(x, y) {
+  for (let i = 0; i < 50; i++) {
+    fireworks.push({
+      x,
+      y,
+      vx: Math.cos(Math.random() * Math.PI * 2) * Math.random() * 5,
+      vy: Math.sin(Math.random() * Math.PI * 2) * Math.random() * 5,
+      life: 60
+    });
+  }
 }
 
 function animateFireworks() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  fireworks.forEach((fw, i) => {
-    explode(fw);
-    if (fw.particles.every(p => p.life <= 0)) {
-      fireworks.splice(i, 1);
+  fireworks.forEach((p, i) => {
+    if (p.life !== undefined) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.life--;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
+      ctx.fill();
+
+      if (p.life <= 0) fireworks.splice(i, 1);
     }
   });
 
@@ -46,6 +49,20 @@ function animateFireworks() {
 }
 
 animateFireworks();
+
+function startFireworks() {
+  setInterval(() => {
+    createExplosion(
+      Math.random() * canvas.width,
+      Math.random() * canvas.height * 0.6
+    );
+  }, 300);
+}
+
+window.addEventListener("resize", () => {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+});
 
 // ===== IST COUNTDOWN =====
 const targetDate = new Date("2026-01-01T00:00:00+05:30");
