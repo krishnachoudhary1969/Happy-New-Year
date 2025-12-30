@@ -70,3 +70,26 @@ footer a {
     text-shadow: 0 0 30px rgba(255,255,255,1);
   }
 }
+
+.hidden {
+  display: none;
+}
+
+.midnight {
+  position: absolute;
+  text-align: center;
+  font-size: 3rem;
+  text-shadow: 0 0 30px rgba(255,255,255,1);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.midnight p {
+  font-size: 1.3rem;
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+@keyframes glowPulse {
+  from { text-shadow: 0 0 15px rgba(255,255,255,0.6); }
+  to   { text-shadow: 0 0 40px rgba(255,255,255,1); }
+}
